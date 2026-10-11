@@ -10,8 +10,14 @@ const globalForDb = globalThis as typeof globalThis & {
 function getPool(): Pool | null {
   if (!databaseUrl) return null;
   if (!globalForDb.__arenaNextJsPostgresqlPool) {
+    const isLocal = databaseUrl.includes("127.0.0.1") || databaseUrl.includes("localhost");
     globalForDb.__arenaNextJsPostgresqlPool = new Pool({
       connectionString: databaseUrl,
+      // Neon/Supabase kabi cloud bazalar SSL talab qiladi. Local da o'chirilgan.
+      ssl: isLocal ? undefined : { rejectUnauthorized: false },
+      max: 1, // serverless (Vercel) da ko'p connection ochmaslik uchun
+      idleTimeoutMillis: 20000,
+      connectionTimeoutMillis: 10000,
     });
   }
   return globalForDb.__arenaNextJsPostgresqlPool;
@@ -30,5 +36,16 @@ export function requireDb() {
 
 export function isDbConfigured() {
   return !!databaseUrl && !!pool;
+}
+
+// Vercel logida aniq ko'rish uchun
+export function dbStatus(): { configured: boolean; host: string } {
+  if (!databaseUrl) return { configured: false, host: "none" };
+  try {
+    const u = new URL(databaseUrl);
+    return { configured: true, host: u.host };
+  } catch {
+    return { configured: true, host: "unknown" };
+  }
 }
 

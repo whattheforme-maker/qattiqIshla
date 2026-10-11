@@ -23,8 +23,12 @@ export async function POST(req: Request) {
       return res;
     } catch (dbErr) {
       console.log("register db fallback", dbErr);
-      // DB bo'lmasa ham mock success — local-first
-      return Response.json({ ok: true, name: name.trim(), mocked: true });
+      const msg = String(dbErr).slice(0, 300);
+      // Foydalanuvchiga aniq sabab: Vercel log + ekranda ko'rinadi
+      if (String(dbErr).includes("DATABASE_URL is not set")) {
+        return Response.json({ error: "Baza sozlanmagan: Vercel da DATABASE_URL yo'q", mocked: true }, { status: 503 });
+      }
+      return Response.json({ error: `Baza xatosi: ${msg}`, mocked: true }, { status: 503 });
     }
   } catch {
     return Response.json({ error: "Server xatosi" }, { status: 500 });

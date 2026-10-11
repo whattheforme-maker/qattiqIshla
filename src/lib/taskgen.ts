@@ -21,31 +21,31 @@ export function seededRand(seed: number) {
   };
 }
 
-const VOCAB_POOL: { en: string; uz: string; ex: string; exUz: string; topic: string }[] = [
-  { en: "journey", uz: "sayohat", ex: "Our journey to Samarkand was amazing.", exUz: "Samarqandga sayohatimiz ajoyib bo'ldi.", topic: "Safar" },
-  { en: "delay", uz: "kechikish", ex: "The flight had a two-hour delay.", exUz: "Reys ikki soat kechikdi.", topic: "Aeroport" },
-  { en: "luggage", uz: "yuk (chamadon)", ex: "Where can I collect my luggage?", exUz: "Yukimni qayerdan olsam bo'ladi?", topic: "Aeroport" },
-  { en: "appointment", uz: "uchrashuv (belgilangan)", ex: "I have an appointment at 10.", exUz: "Soat 10 da uchrashuvim bor.", topic: "Ish" },
-  { en: "opportunity", uz: "imkoniyat", ex: "This job is a great opportunity.", exUz: "Bu ish zo'r imkoniyat.", topic: "Ish" },
-  { en: "recipe", uz: "retsept / taom retsepti", ex: "Can you share the soup recipe?", exUz: "Sho'rva retseptini bera olasizmi?", topic: "Taom" },
-  { en: "ancient", uz: "qadimiy", ex: "Khiva is an ancient city.", exUz: "Xiva qadimiy shahar.", topic: "Tarix" },
-  { en: "bridge", uz: "ko'prik", ex: "The bridge connects two banks.", exUz: "Ko'prik ikki qirg'oqni bog'laydi.", topic: "Shahar" },
-  { en: "courage", uz: "jasorat", ex: "She had the courage to speak.", exUz: "U gapirishga jasorat topdi.", topic: "Xarakter" },
-  { en: "honest", uz: "halol", ex: "Be honest with your teacher.", exUz: "Ustozingizga nisbatan halol bo'ling.", topic: "Xarakter" },
-  { en: "improve", uz: "yaxshilamoq", ex: "I want to improve my listening.", exUz: "Tinglab tushunishimni yaxshilamoqchiman.", topic: "O'quv" },
-  { en: "habit", uz: "odat", ex: "Reading is a good habit.", exUz: "Kitob o'qish yaxshi odat.", topic: "O'quv" },
-  { en: "bargain", uz: "savdolashmoq", ex: "You can bargain in the bazaar.", exUz: "Bozorda savdolashsa bo'ladi.", topic: "Bozor" },
-  { en: "eager", uz: "ishtiyoqmand", ex: "He is eager to learn English.", exUz: "U inglizcha o'rganishga ishtiyoqmand.", topic: "O'quv" },
-  { en: "fragile", uz: "mo'rt, sinuvchan", ex: "Glass is fragile.", exUz: "Shisha mo'rt.", topic: "Buyum" },
-  { en: "generous", uz: "saxiy", ex: "My neighbour is very generous.", exUz: "Qo'shnim juda saxiy.", topic: "Xarakter" },
-  { en: "curious", uz: "qiziquvchan", ex: "Children are naturally curious.", exUz: "Bolalar tabiiy qiziquvchan.", topic: "Xarakter" },
-  { en: "thunder", uz: "momaqaldiroq", ex: "Thunder woke me up.", exUz: "Momaqaldiroq meni uyg'otdi.", topic: "Ob-havo" },
-  { en: "invoice", uz: "hisob-faktura", ex: "Please send the invoice.", exUz: "Iltimos, hisob-fakturani yuboring.", topic: "Biznes" },
-  { en: "deadline", uz: "muddati", ex: "The deadline is Friday.", exUz: "Muddati juma kuni.", topic: "Ish" },
-  { en: "whisper", uz: "shivirlash", ex: "Don't whisper in class.", exUz: "Darsda shivirlashma.", topic: "Muloqot" },
-  { en: "embrace", uz: "quchoqlamoq", ex: "They embraced at the airport.", exUz: "Ular aeroportda quchoqlashdi.", topic: "Hissiyot" },
-  { en: "rescue", uz: "qutqarmoq", ex: "They rescued the cat.", exUz: "Ular mushukni qutqarishdi.", topic: "Hodisa" },
-  { en: "punctual", uz: "vaqtida keladigan", ex: "Be punctual for the interview.", exUz: "Intervyuga vaqtida boring.", topic: "Ish" },
+const VOCAB_POOL: { en: string; uz: string; ex: string; exUz: string; topic: string; lvl: string }[] = [
+  { en: "journey", uz: "sayohat", ex: "Our journey to Samarkand was amazing.", exUz: "Samarqandga sayohatimiz ajoyib bo'ldi.", lvl: "A2", topic: "Safar" },
+  { en: "delay", uz: "kechikish", ex: "The flight had a two-hour delay.", exUz: "Reys ikki soat kechikdi.", lvl: "A2", topic: "Aeroport" },
+  { en: "luggage", uz: "yuk (chamadon)", ex: "Where can I collect my luggage?", exUz: "Yukimni qayerdan olsam bo'ladi?", lvl: "A1", topic: "Aeroport" },
+  { en: "appointment", uz: "uchrashuv (belgilangan)", ex: "I have an appointment at 10.", exUz: "Soat 10 da uchrashuvim bor.", lvl: "A2", topic: "Ish" },
+  { en: "opportunity", uz: "imkoniyat", ex: "This job is a great opportunity.", exUz: "Bu ish zo'r imkoniyat.", lvl: "B1", topic: "Ish" },
+  { en: "recipe", uz: "retsept / taom retsepti", ex: "Can you share the soup recipe?", exUz: "Sho'rva retseptini bera olasizmi?", lvl: "A2", topic: "Taom" },
+  { en: "ancient", uz: "qadimiy", ex: "Khiva is an ancient city.", exUz: "Xiva qadimiy shahar.", lvl: "B1", topic: "Tarix" },
+  { en: "bridge", uz: "ko'prik", ex: "The bridge connects two banks.", exUz: "Ko'prik ikki qirg'oqni bog'laydi.", lvl: "A1", topic: "Shahar" },
+  { en: "courage", uz: "jasorat", ex: "She had the courage to speak.", exUz: "U gapirishga jasorat topdi.", lvl: "B2", topic: "Xarakter" },
+  { en: "honest", uz: "halol", ex: "Be honest with your teacher.", exUz: "Ustozingizga nisbatan halol bo'ling.", lvl: "A1", topic: "Xarakter" },
+  { en: "improve", uz: "yaxshilamoq", ex: "I want to improve my listening.", exUz: "Tinglab tushunishimni yaxshilamoqchiman.", lvl: "A2", topic: "O'quv" },
+  { en: "habit", uz: "odat", ex: "Reading is a good habit.", exUz: "Kitob o'qish yaxshi odat.", lvl: "A1", topic: "O'quv" },
+  { en: "bargain", uz: "savdolashmoq", ex: "You can bargain in the bazaar.", exUz: "Bozorda savdolashsa bo'ladi.", lvl: "B1", topic: "Bozor" },
+  { en: "eager", uz: "ishtiyoqmand", ex: "He is eager to learn English.", exUz: "U inglizcha o'rganishga ishtiyoqmand.", lvl: "B1", topic: "O'quv" },
+  { en: "fragile", uz: "mo'rt, sinuvchan", ex: "Glass is fragile.", exUz: "Shisha mo'rt.", lvl: "B1", topic: "Buyum" },
+  { en: "generous", uz: "saxiy", ex: "My neighbour is very generous.", exUz: "Qo'shnim juda saxiy.", lvl: "B1", topic: "Xarakter" },
+  { en: "curious", uz: "qiziquvchan", ex: "Children are naturally curious.", exUz: "Bolalar tabiiy qiziquvchan.", lvl: "A2", topic: "Xarakter" },
+  { en: "thunder", uz: "momaqaldiroq", ex: "Thunder woke me up.", exUz: "Momaqaldiroq meni uyg'otdi.", lvl: "B1", topic: "Ob-havo" },
+  { en: "invoice", uz: "hisob-faktura", ex: "Please send the invoice.", exUz: "Iltimos, hisob-fakturani yuboring.", lvl: "B2", topic: "Biznes" },
+  { en: "deadline", uz: "muddati", ex: "The deadline is Friday.", exUz: "Muddati juma kuni.", lvl: "B1", topic: "Ish" },
+  { en: "whisper", uz: "shivirlash", ex: "Don't whisper in class.", exUz: "Darsda shivirlashma.", lvl: "B1", topic: "Muloqot" },
+  { en: "embrace", uz: "quchoqlamoq", ex: "They embraced at the airport.", exUz: "Ular aeroportda quchoqlashdi.", lvl: "B2", topic: "Hissiyot" },
+  { en: "rescue", uz: "qutqarmoq", ex: "They rescued the cat.", exUz: "Ular mushukni qutqarishdi.", lvl: "A2", topic: "Hodisa" },
+  { en: "punctual", uz: "vaqtida keladigan", ex: "Be punctual for the interview.", exUz: "Intervyuga vaqtida boring.", lvl: "B1", topic: "Ish" },
 ];
 
 const GRAMMAR_TOPICS = [
@@ -154,7 +154,7 @@ export function uniqueTasksForDay(opts: {
     const pick = <T,>(arr: T[]) => arr[Math.floor(r() * arr.length) % arr.length];
 
     if (kind === "vocab") {
-      const shuffled = [...VOCAB_POOL].sort(() => r() - 0.5).slice(0, 5);
+      const shuffled = vocabForLevel(level, 5, r);
       const formats = ["flash-kartalar + test", "rasmli topish o'yini", "gap tuzish", "tezlik viktorinasi", "eslab yozish"];
       return {
         kind,
@@ -225,6 +225,18 @@ export function uniqueTasksForDay(opts: {
   });
 }
 
+export type VocabWord = { en: string; uz: string; ex: string; exUz: string; topic: string; lvl: string };
+const LVL_IDX: Record<string, number> = { A1: 0, A2: 1, B1: 2, B2: 3, C1: 4 };
+// Darajaga qarab so'z: o'z darajasi + 1 past + 1 yuqori (tabiiy o'sish)
+export function vocabForLevel(level: string, count: number, rand: () => number): VocabWord[] {
+  const idx = LVL_IDX[level] ?? 0;
+  const near = (VOCAB_POOL as VocabWord[]).filter((w) => Math.abs((LVL_IDX[w.lvl] ?? 1) - idx) <= 1);
+  const pool = near.length >= count ? near : (VOCAB_POOL as VocabWord[]);
+  return [...pool].sort(() => rand() - 0.5).slice(0, count);
+}
+export { VOCAB_POOL };
+
+// Eski placementQuestions endi ishlatilmaydi — placementForUser (placement.ts) ishlatiladi
 export function placementQuestions() {
   return [
     { q: "She ___ a teacher.", opts: ["is", "are", "am", "be"], a: 0, lvl: "A1" },

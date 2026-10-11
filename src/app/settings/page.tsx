@@ -7,14 +7,18 @@ import { loadProfile, saveProfile, geminiKeyGet, geminiKeySet } from "@/lib/clie
 export default function Settings() {
   const [p, setP] = useState(loadProfile());
   const [key, setKey] = useState(geminiKeyGet());
+  const [hasSavedKey, setHasSavedKey] = useState(() => geminiKeyGet().length > 0);
   const [msg, setMsg] = useState("");
   const [theme, setTheme] = useState("cosmic");
 
   const save = () => {
     saveProfile(p);
-    geminiKeySet(key);
+    geminiKeySet(key.trim());
+    setKey("");
+    setHasSavedKey(key.trim().length > 0);
     fetch("/api/profile", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(p) }).catch(() => {});
-    setMsg("✅ Saqlandi! Gemini kaliti brauzeringizda (faqat sizda) saqlanadi.");
+    setMsg("✅ Saqlandi! Kalit yashirildi — keyingi safar ko'rinmaydi. Yangi kalit qo'ysangiz eskisi almashadi.");
+    setTimeout(() => setMsg(""), 5000);
   };
 
   const exportJson = () => {
@@ -44,12 +48,12 @@ export default function Settings() {
             <a href="https://aistudio.google.com/app/apikey" target="_blank" className="underline text-[#7fe0c3]">Google AI Studio</a> dan oling va shu yerga yopishtiring.
             Kalit faqat brauzeringizda saqlanadi va har bir AI so'rovda serverga yuboriladi. Kalit bo'lmasa — mock rejim ishlaydi.
           </p>
-          <input value={key} onChange={(e) => setKey(e.target.value)} type="password" placeholder="AIza..." className="mt-3 w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm outline-none focus:border-[#7fe0c3]" />
+          <input value={key} onChange={(e) => setKey(e.target.value)} type="password" placeholder={hasSavedKey ? "•••••••• (saqlangan — yangilash uchun yangi kalit yozing)" : "AIza..."} className="mt-3 w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm outline-none focus:border-[#7fe0c3]" />
           <div className="mt-2 flex items-center gap-2 text-xs">
-            <span className={`rounded-full px-2.5 py-1 font-bold ${key ? "bg-emerald-500/20 text-emerald-200" : "bg-amber-500/20 text-amber-200"}`}>
-              {key ? "● AI ulangan" : "● Mock rejim (kalitsiz)"}
+            <span className={`rounded-full px-2.5 py-1 font-bold ${hasSavedKey ? "bg-emerald-500/20 text-emerald-200" : "bg-amber-500/20 text-amber-200"}`}>
+              {hasSavedKey ? "● AI ulangan" : "● Mock rejim (kalitsiz)"}
             </span>
-            {key && <button onClick={() => { setKey(""); geminiKeySet(""); }} className="underline text-white/50">O'chirish</button>}
+            {hasSavedKey && <button onClick={() => { setKey(""); geminiKeySet(""); setHasSavedKey(false); }} className="underline text-white/50">O'chirish</button>}
           </div>
         </div>
 

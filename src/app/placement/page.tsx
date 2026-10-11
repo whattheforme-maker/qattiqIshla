@@ -1,12 +1,19 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { placementQuestions, gradePlacement } from "@/lib/taskgen";
+import { useMemo, useState } from "react";
+import { gradePlacement } from "@/lib/taskgen";
+import { placementForUser } from "@/lib/placement";
 import { loadProfile, saveProfile, geminiKeyGet } from "@/lib/client-store";
 
 export default function Placement() {
   const r = useRouter();
-  const qs = placementQuestions();
+  const profile = useMemo(() => loadProfile(), []);
+  // Har userga individual: name+email dan seed
+  const { qs, writing: wTopic } = useMemo(
+    () => placementForUser(`${profile.name}|${profile.email}|${new Date().toISOString().slice(0, 10)}-${profile.name.length}`),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [writing, setWriting] = useState("");
   const [step, setStep] = useState(0);
@@ -102,7 +109,7 @@ export default function Placement() {
         ) : (
           <div className="mt-6">
             <p className="font-bold">Yozma qism (ixtiyoriy, lekin daraja aniqligini oshiradi)</p>
-            <p className="mt-1 text-sm text-white/60">Mavzu: “My yesterday” — 40+ so'z, Past Simple ishlating.</p>
+            <p className="mt-1 text-sm text-white/60">Mavzu: “{wTopic.t}” — {wTopic.hint}</p>
             <textarea value={writing} onChange={(e) => setWriting(e.target.value)} rows={6}
               placeholder="Yesterday I woke up at 7..."
               className="mt-3 w-full rounded-2xl border border-white/15 bg-white/5 p-4 text-sm outline-none focus:border-[#e8b07a]" />

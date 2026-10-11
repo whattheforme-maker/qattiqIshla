@@ -31,3 +31,7 @@ next-env.d.ts
 # drizzle
 drizzle/*.sql
 
+# logs
+build-out.txt
+tsc-out.txt
+

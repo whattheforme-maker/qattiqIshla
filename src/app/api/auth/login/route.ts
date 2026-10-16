@@ -1,32 +1,50 @@
-import { requireDb } from "@/db";
+import { requireDb, isDbConfigured } from "@/db";
 import { users } from "@/db/schema";
-import { verifyPassword, signToken, getCookieName } from "@/lib/auth";
+import { verifyPassword, signToken, cookieOptions, getCookieName } from "@/lib/auth";
 import { eq } from "drizzle-orm";
 
 export async function POST(req: Request) {
+  let body: { email?: string; password?: string };
   try {
-    const { email, password } = await req.json();
-    if (!email || !password) return Response.json({ error: "Email + parol" }, { status: 400 });
-    const clean = email.trim().toLowerCase();
-    let rows;
-    try {
-      rows = await requireDb().select().from(users).where(eq(users.email, clean)).limit(1);
-    } catch (dbErr) {
-      console.log("login db fallback (mock rejim):", dbErr);
-      return Response.json(
-        { error: "Baza ulanmagan (mock rejim). Iltimos, Ro'yxatdan o'ting yoki Demo kunni ko'ring." },
-        { status: 503 }
-      );
+    body = await req.json();
+  } catch {
+    return Response.json({ error: "Noto'g'ri so'rov" }, { status: 400 });
+  }
+
+  if (!body.email || !body.password) {
+    return Response.json({ error: "Email va parolni kiriting" }, { status: 400 });
+  }
+
+  const clean = body.email.trim().toLowerCase();
+
+  if (!isDbConfigured()) {
+    return Response.json(
+      { error: "Baza sozlanmagan — kirish mumkin emas. Iltimos, keyinroq urinib ko'ring.", db: false },
+      { status: 503 },
+    );
+  }
+
+  try {
+    const rows = await requireDb().select().from(users).where(eq(users.email, clean)).limit(1);
+    if (rows.length === 0) {
+      // Generic message to prevent email enumeration
+      return Response.json({ error: "Email yoki parol noto'g'ri" }, { status: 401 });
     }
-    if (rows.length === 0) return Response.json({ error: "Foydalanuvchi topilmadi" }, { status: 404 });
-    const ok = await verifyPassword(password, rows[0].passwordHash);
-    if (!ok) return Response.json({ error: "Parol noto'g'ri" }, { status: 401 });
+
+    const ok = await verifyPassword(body.password, rows[0].passwordHash);
+    if (!ok) {
+      return Response.json({ error: "Email yoki parol noto'g'ri" }, { status: 401 });
+    }
+
     const token = signToken({ id: rows[0].id, email: rows[0].email, name: rows[0].name });
-    const res = Response.json({ ok: true, name: rows[0].name });
-    res.headers.set("Set-Cookie", `${getCookieName()}=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${30 * 86400}`);
+    const res = Response.json({ ok: true, name: rows[0].name, email: rows[0].email });
+    res.headers.set("Set-Cookie", `${getCookieName()}=${token}; ${cookieOptions(30 * 86400)}`);
     return res;
   } catch (e) {
-    console.log(e);
-    return Response.json({ error: "Server xatosi" }, { status: 500 });
+    console.error("login db error:", String(e).slice(0, 300));
+    if ((e as { code?: string }).code === "DB_NOT_CONFIGURED") {
+      return Response.json({ error: "Baza sozlanmagan — kirish mumkin emas", db: false }, { status: 503 });
+    }
+    return Response.json({ error: "Kirishda xatoya yuz berdi", db: false }, { status: 500 });
   }
 }

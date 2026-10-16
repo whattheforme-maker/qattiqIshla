@@ -35,3 +35,7 @@ drizzle/*.sql
 build-out.txt
 tsc-out.txt
 
+
+# IDE
+.idea/
+

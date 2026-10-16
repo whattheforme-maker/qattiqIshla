@@ -6,12 +6,25 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   const st = dbStatus();
   if (!isDbConfigured()) {
-    return Response.json({ ok: true, mocked: true, db: false, ...st, hint: "Vercel > Settings > Environment Variables da DATABASE_URL yo'q" });
+    return Response.json({
+      ok: false,
+      mocked: true,
+      db: false,
+      message: "DATABASE_URL sozlanmagan — faqat demo rejim",
+      hint: "Hosting boshqaruv paneli da DATABASE_URL o'rnating",
+    }, { status: 503 });
   }
   try {
     await requireDb().execute(sql`select 1`);
-    return Response.json({ ok: true, db: true, ...st });
+    return Response.json({ ok: true, db: true, ...st, message: "Baza ulanishi faol" });
   } catch (e) {
-    return Response.json({ ok: true, mocked: true, db: false, ...st, error: String(e).slice(0, 300), hint: "DATABASE_URL bor lekin ulanib bo'lmadi yoki table yo'q — drizzle-kit push qiling" });
+    return Response.json({
+      ok: false,
+      mocked: false,
+      db: false,
+      configured: true,
+      message: "DATABASE_URL bor lekin ulanib bo'lmadi",
+      hint: "drizzle-kit push yoki migrate.sql orqali jadvallarni yarating",
+    }, { status: 503 });
   }
 }

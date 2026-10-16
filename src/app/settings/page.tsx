@@ -11,12 +11,30 @@ export default function Settings() {
   const [msg, setMsg] = useState("");
   const [theme, setTheme] = useState("cosmic");
 
-  const save = () => {
+  const save = async () => {
     saveProfile(p);
     geminiKeySet(key.trim());
     setKey("");
     setHasSavedKey(key.trim().length > 0);
-    fetch("/api/profile", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(p) }).catch(() => {});
+    // Save to server if authenticated
+    try {
+      await fetch("/api/profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          currentLevel: p.currentLevel,
+          targetLevel: p.targetLevel,
+          deadlineDays: p.deadlineDays,
+          dailyMinutes: p.dailyMinutes,
+          daysPerWeek: p.daysPerWeek,
+          purpose: p.purpose,
+          interests: p.interests,
+          weakAreas: p.weakAreas,
+          name: p.name,
+        }),
+        credentials: "include",
+      }).catch(() => {});
+    } catch {}
     setMsg("✅ Saqlandi! Kalit yashirildi — keyingi safar ko'rinmaydi. Yangi kalit qo'ysangiz eskisi almashadi.");
     setTimeout(() => setMsg(""), 5000);
   };

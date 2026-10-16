@@ -17,13 +17,25 @@ export default function Onboarding() {
   const [p, setP] = useState(loadProfile());
   const [step, setStep] = useState(0);
 
-  const save = () => {
+  const save = async () => {
     saveProfile({ ...p, onboarded: true });
-    fetch("/api/profile", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(p),
-    }).catch(() => {});
+    // Save to server if authenticated
+    try {
+      await fetch("/api/profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          currentLevel: p.currentLevel,
+          targetLevel: p.targetLevel,
+          deadlineDays: p.deadlineDays,
+          dailyMinutes: p.dailyMinutes,
+          daysPerWeek: p.daysPerWeek,
+          purpose: p.purpose,
+          interests: p.interests,
+          weakAreas: p.weakAreas,
+        }),
+      }).catch(() => {});
+    } catch {}
     r.push("/placement");
   };
 

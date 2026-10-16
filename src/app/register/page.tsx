@@ -27,16 +27,19 @@ export default function Register() {
       });
       const j = await res.json();
       if (!res.ok) throw new Error(j.error || "Xatolik");
+      // Successful registration — cookie is set by server, save local session marker
+      try {
+        localStorage.setItem("linguaplan_user", JSON.stringify({ name: name.trim(), email: email.trim() }));
+      } catch {}
+      // Save local profile so the app works immediately even before server sync
+      const p = loadProfile();
+      saveProfile({ ...p, name: name.trim(), email: email.trim(), isAuthenticated: true });
+      r.push("/onboarding");
     } catch (e: unknown) {
-      // DB bo'lmasa ham local davom etamiz
-      console.log("register fallback", e);
+      setErr(e instanceof Error ? e.message : "Ro'yxatdan o'tishda xatolik. Iltimos, keyinroq urinib ko'ring.");
+    } finally {
+      setLoading(false);
     }
-    const p = loadProfile();
-    saveProfile({ ...p, name: name.trim(), email: email.trim() });
-    try {
-      localStorage.setItem("linguaplan_user", JSON.stringify({ name, email }));
-    } catch {}
-    r.push("/onboarding");
   };
 
   return (

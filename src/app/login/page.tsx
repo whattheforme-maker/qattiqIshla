@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { loadProfile, saveProfile } from "@/lib/client-store";
 
 export default function Login() {
   const r = useRouter();
@@ -22,17 +23,44 @@ export default function Login() {
       });
       const j = await res.json();
       if (!res.ok) throw new Error(j.error || "Login xatosi");
+      // Successful login — cookie is set by server
       try {
-        localStorage.setItem("linguaplan_user", JSON.stringify({ name: j.name, email }));
+        localStorage.setItem("linguaplan_user", JSON.stringify({ name: j.name || "", email }));
       } catch {}
-      const raw = localStorage.getItem("linguaplan_v1");
-      if (raw) {
-        const p = JSON.parse(raw);
-        p.name = j.name || p.name;
-        p.email = email;
-        localStorage.setItem("linguaplan_v1", JSON.stringify(p));
-      }
-      r.push("/day/12");
+      // Restore local profile from server if available
+      try {
+        const profRes = await fetch("/api/profile", { credentials: "include" });
+        if (profRes.ok) {
+          const profData = await profRes.json();
+          if (profData.ok && profData.profile) {
+            const prof = profData.profile;
+            const p = loadProfile();
+            saveProfile({
+              ...p,
+              name: profData.user.name,
+              email: profData.user.email,
+              currentLevel: prof.current_level,
+              targetLevel: prof.target_level,
+              deadlineDays: prof.deadline_days,
+              dailyMinutes: prof.daily_minutes,
+              daysPerWeek: prof.days_per_week,
+              purpose: prof.purpose,
+              interests: prof.interests,
+              weakAreas: prof.weak_areas,
+              streakDays: prof.streak_days,
+              longestStreak: prof.longest_streak,
+              freezeAvailable: prof.freeze_available,
+              lastActiveDate: prof.last_active_date ?? null,
+              totalXp: prof.total_xp,
+              completedCount: prof.completed_count,
+              currentDay: prof.start_date ? 1 : (p.currentDay || 1),
+              isAuthenticated: true,
+              userId: profData.user.id,
+            });
+          }
+        }
+      } catch {}
+      r.push("/day/1");
     } catch (e: unknown) {
       setErr(e instanceof Error ? e.message : "Xatolik. Demo sifatida davom eting.");
     } finally {

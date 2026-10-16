@@ -44,7 +44,28 @@ export default function Placement() {
       } catch {}
     }
     const p = loadProfile();
-    saveProfile({ ...p, currentLevel: level, weakAreas: weak, placed: true, currentDay: 12 });
+    saveProfile({ ...p, currentLevel: level, weakAreas: weak, placed: true, currentDay: 1 });
+    // Persist placement result to server
+    try {
+      await fetch("/api/placement", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ score, total: qs.length, level, weakAreas: weak, writingText: writing, writingScore: 0 }),
+        credentials: "include",
+      }).catch(() => {});
+    } catch {}
+    // Save current level/weak areas to server profile
+    try {
+      await fetch("/api/profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          currentLevel: level,
+          weakAreas: weak,
+        }),
+        credentials: "include",
+      }).catch(() => {});
+    } catch {}
     setLoading(false);
     r.push("/feasibility");
   };
